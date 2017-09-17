@@ -3,16 +3,38 @@ package com.dck;
 import java.util.List;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Random;
+import java.io.IOException;
+import java.io.FileReader;
+import java.io.BufferedReader;
 
 public class Pendu {
   private String mWord;
-  private List<String> wordGuessed;
+  private List<String> wordGuessed = new ArrayList<String>();
   private int miss = 0;
   private int MAX_MISS = 5;
+  private Scanner sc = new Scanner(System.in);
+  private List<String> mWords = new ArrayList<String>();
 
-  public Pendu(String word) {
-    mWord = word;
-    wordGuessed = new ArrayList<String>();
+  public Pendu() {
+    Random rand = new Random();
+    String line = null;
+
+    System.out.printf("%n Chargement des mots provenant de words.txt... %n %n");
+
+    try {
+      BufferedReader bufferedReader = new BufferedReader(new FileReader("words.txt"));
+
+      while((line = bufferedReader.readLine()) != null) {
+        mWords.add(line);
+      }
+    } catch(IOException ioe) {
+      System.out.printf("%n /!\\ Impossible de lire words.txt %n");
+    } finally {
+      int randomIndex = rand.nextInt(mWords.size()) + 1;
+      
+      mWord = mWords.get(randomIndex).toLowerCase().trim();
+    }
   }
 
   private String showProgress() {
@@ -43,7 +65,6 @@ public class Pendu {
 
    public void start() {
     System.out.println("/ JEU DU PENDU /");
-    Scanner sc = new Scanner(System.in);
 
     do {
       System.out.printf("%nMot à deviner : %s %n--> ", showProgress());
@@ -62,9 +83,9 @@ public class Pendu {
     } while(miss < MAX_MISS && !showProgress().equals(mWord));
 
     if (miss == MAX_MISS) {
-      System.out.printf("PERDU ! Le mot mystère était : %s %n", mWord);
+      System.out.printf("%nPERDU ! Le mot mystère était : %s %n", mWord);
     } else {
-      System.out.printf("Bravo ! Vous avez gagné :) %n");
+      System.out.printf("%nBravo ! Vous avez gagné :) %n");
     }
   }
 }
